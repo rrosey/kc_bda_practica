@@ -1,1 +1,1 @@
-# kc_bda_practica
+# Big Data Architecture - Práctica Airbnb
