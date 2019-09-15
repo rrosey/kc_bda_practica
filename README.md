@@ -1,7 +1,7 @@
 # Big Data Architecture - Práctica Airbnb
 Este repositorio describe cada una de las partes desarrolladas en la práctica de Big Data Architecture del _Bootcamp Big Data & Machine Learning_ de [KeepCoding](https://keepcoding.io/es/)
 ## Estrategia
-Desarrollar una herramienta que nos permita detectar carencias de servicios en determinadas zonas de las ciudades. Se trata de un sistema que nos pueda predecir oportunidades de negocio a partir de la recopilación y análisis de distintas fuentes de datos. A modo de ejemplo, podriamos predecir las necesidades de empresas de limpieza cercanas a pisos de alquiler.
+Desarrollar una herramienta que nos permita detectar carencias de servicios en determinadas zonas de las ciudades. Se trata de un sistema que nos pueda predecir oportunidades de negocio a partir de la recopilación y análisis de distintas fuentes de datos. A modo de ejemplo, podríamos predecir las necesidades de empresas de limpieza cercanas a pisos de alquiler.
 
 ## 1. Architectura y Flujo de datos
 ### Diseño
@@ -11,17 +11,17 @@ A continuación se muestra un diagrama con el flujo de datos y las tecnologías 
 
 Se pueden distinguir varios bloques:
 
-#### Dadasets
-Los datatasets utilizados. Nuestro sistema recopilará ademas del dataset de Airbnb otras fuentes de datos de distinta naturaleza como redes sociales, webs de anuncios, webs de venta de locales, tiempo,...
+#### Datasets
+Los datatasets utilizados. Nuestro sistema recopilará además del dataset de Airbnb otras fuentes de datos de distinta naturaleza como redes sociales, webs de anuncios, webs de venta de locales, tiempo,...
 
 #### Procesado local (on-premise)
-Dispondermos de varios web scrapers que se ejecutaran en local. Estos se programarán para que se ejecuten cada cierto tiempo dependiendo de la naturaleza de los datos (diariamente, semanalmente,...). Por ejemplo el módulo encargado de hacer scraping sobre las webs de anuncios podría ejecutarse una vez al día. Al mismo tiempo también dispondremos de otro módulo que será el encargado de subir los datos obtenidos al Cloud Storage de Google una vez se tenga la información recopilada en formato csv.
+Dispondremos de varios web scrapers que se ejecutaran en local. Estos se programarán para que se ejecuten cada cierto tiempo dependiendo de la naturaleza de los datos (diariamente, semanalmente,...). Por ejemplo el módulo encargado de hacer scraping sobre las webs de anuncios podría ejecutarse una vez al día. Al mismo tiempo también dispondremos de otro módulo que será el encargado de subir los datos obtenidos al Cloud Storage de Google una vez se tenga la información recopilada en formato csv.
 
 #### Procesao en la nube (GCP)
 Para llevar a cabo los procesados sobre datos masivos de datos se ha optado por montar un cluster Hadoop en la plataforma de Google GCP. En este cluster se podrían llevar a cabo dos tipos de procesado: procesado en streaming y procesado en batch.
 
 ##### Procesado en streaming
-Para la recopilar la información de las redes sociales se podría utilizar las APIs ofrecidas por estas redes y procesar la información mediante tecnologías como Apache Spark/Flink que nos permiten realizar análisis de sentimiento (en streaming). Apache Kafka se puede añadir como una capa que nos desacople la ingestión de los datos del procesado, de modo que al ser una tecnología de colas distribuidas y permanentes nos permita procesar la misma información por diferentes módulos o en instantes de tiempo distintos, en el caso de que sea necesario.
+Para la recopilar la información de las redes sociales se podría utilizar las APIs ofrecidas por estas redes, y procesar la información mediante tecnologías como Apache Spark/Flink que nos permiten realizar análisis de sentimiento. Apache Kafka se puede añadir como una capa que nos desacople la ingestión de los datos del procesado, de modo que al ser una tecnología de colas distribuidas y permanentes nos permita procesar la misma información por diferentes módulos o en instantes de tiempo distintos, en el caso de que sea necesario.
 
 #### Capa de procesado en batch
 Los distintos datasets recopilados por los scrapers junto con el dataset de Airbnb se subirán al Cloud Storage de Google, permitiendo mediante una tecnología como Hive cargar estos datos en tablas, y facilitar el cruce de la información, transformación de datos o agregaciones mediante queries SQL. Estos jobs también deberán automatizarse mediante algun programa que ejecute las consultas de ETL en Hive. En el ecosistema de Hadoop tenemos herramientas como Oozie que nos permite programar flujos de trabajo, pero también podrían ejecutarse de forma externa mediante un programa que ejecute las queries necesarias.
@@ -29,18 +29,18 @@ Los distintos datasets recopilados por los scrapers junto con el dataset de Airb
 Una vez obtenida la información de sentimientos de las redes sociales y los distintos datasets tendremos nuestra "caja negra" de procesado donde se analizará toda esta información y se realizarán las predicciones correspondientes.
 
 #### Visualización
-Los resultados obtenidos se deberian publicar para que mediante una web o mediante herramientas de exploración y analisis de datos como Microsoft Power BI, Tableau o Superset se puedan consultar los datos de una forma amigable. Con estas herramientas los usuarios pueden conectarse a multitud de fuentes de datos y preparar cuadros de mando con los que poder interactuar.
+Los resultados obtenidos se deberían publicar para que mediante una web o mediante herramientas de exploración y análisis de datos como Microsoft Power BI, Tableau o Superset se puedan consultar los datos de una forma amigable. Con estas herramientas los usuarios pueden conectarse a multitud de fuentes de datos y preparar cuadros de mando con los que poder interactuar.
 
-Además de este tipo de visualización, para usuarios más avanzados también se tendría disponible los datos almacenados en el datalake, permitiendo su análisis ya consulta a través de notebooks como Jupyter.
+Además de este tipo de visualización, para usuarios más avanzados también se tendría disponible los datos almacenados en el datalake, permitiendo su análisis y consulta a través de notebooks como Jupyter.
 
 ## 2. Datasets y scraping
-Ademas del datast de Airbnb, el proyecto hará uso de varias fuentes de datos con diferente formato, y que se extraerán mediante distintas técnicas. A modo de ejemplo se ha desarrollado un pequeño crawler utilizando la librería [scrapy](https://scrapy.org/). Esta crawler recoge la información de la web www.idealista.com. Puedes visualizar el código en la carpeta del repositorio code (_idealista-scraping.py_)
+Ademas del dataset de Airbnb, el proyecto hará uso de varias fuentes de datos con diferente formato, y que se extraerán mediante distintas técnicas. A modo de ejemplo se ha desarrollado un pequeño crawler utilizando la librería [scrapy](https://scrapy.org/). Este crawler recoge la información de la web www.idealista.com. Puedes visualizar el código en la carpeta del repositorio code (_idealista-scraping.py_)
 
 Otros posibles datasets que habría que evaluar serian:
 - Twitter para análisis de sentimientos y su geolocalizacion, con la finalidad de evaluar las carencias de ciertos servicios en las ciudades.
 - Distancias mediante la API de Google matrix.
 - Predicciones de tiempo de AEMET.
-- Datos estadísticos actuaciones Policía Municipal.
+- Datos estadísticos de actuaciones Policía Municipal.
 - ...
 
 Tanto para el dataset de Airbnb como para el resto de datasets obtenidos faltaría una fase de limpieza y validación de los datos que actualmente no se ha realizado.
@@ -81,7 +81,7 @@ Los pasos a seguir son:
 
 ![img cluster](img/cluster-list-vm.png)
 
-7. Una forma de comprobar que está todo funcionando y podemos acceder desde el exterior es acceder a la vista del Resource Manager para comprobar los recursos que gestiona YARN.
+7. Para comprobar que todo esta funcionando, accedemos desde el exterior a la vista del ResourceManager (para ver los recursos que gestiona YARN).
 
 ![img cluster](img/cluster-view-yarn-rm.png)
 
@@ -103,7 +103,7 @@ Para poder autentificarnos los pasos a seguir son:
 
 3. Se descagará un fichero json con nuestra clave privada y que utilizaremos desde python para autentificarnos.
 
-4. Nuestro programa necesitará las librerias cliente para conectarse al Cloud Storage
+4. Nuestro programa necesitará las librerías cliente para conectarse al Cloud Storage
 
 ```
 pip install --upgrade google-cloud-storage
