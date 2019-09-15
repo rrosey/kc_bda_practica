@@ -4,10 +4,6 @@ import scrapy
 import json
 from scrapy.crawler import CrawlerProcess
 
-
-#https://www.milanuncios.com/datos-contacto/?usePhoneProxy=0&from=detail&id=316280106
-
-
 class IdealistaSpider(scrapy.Spider):
     name = 'IdealistaSpider'
     start_urls = ['https://www.idealista.com/venta-locales/madrid-madrid/']
